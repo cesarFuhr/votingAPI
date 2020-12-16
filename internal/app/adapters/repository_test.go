@@ -10,6 +10,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
 )
 
 type anyTime struct{}
@@ -29,6 +30,13 @@ var sessionMock = session.Session{
 	OriginalAgenda: "string",
 	Duration:       time.Minute,
 	Creation:       time.Now(),
+}
+
+var voteMock = vote.Vote{
+	AssociateID: "string",
+	SessionID:   "string",
+	Document:    "12333",
+	Creation:    time.Now(),
 }
 
 func TestInsertAgenda(t *testing.T) {
@@ -114,7 +122,7 @@ func TestFindAgenda(t *testing.T) {
 		assertValue(t, got, want)
 	})
 
-	t.Run("not founding the key, return a ErrKeyNotFound", func(t *testing.T) {
+	t.Run("not founding the key, return a Agenda not Found", func(t *testing.T) {
 		want := errors.New("Agenda not found")
 		mock.ExpectQuery(`
 				SELECT id, description
@@ -169,7 +177,7 @@ func TestFindSession(t *testing.T) {
 
 	t.Run("calls db.QueryRow with the right params", func(t *testing.T) {
 		mock.ExpectQuery(`
-			SELECT id, originalAgenda, duration, creation
+		SELECT id, originalAgenda, duration, creation
 				FROM sessions
 				WHERE id`).WithArgs(sessionMock.ID)
 
@@ -187,8 +195,8 @@ func TestFindSession(t *testing.T) {
 		mock.
 			ExpectQuery(`
 					SELECT id, originalAgenda, duration, creation
-						FROM sessions
-						WHERE id`).
+					FROM sessions
+					WHERE id`).
 			WithArgs(sessionMock.ID).
 			WillReturnRows(rows)
 
@@ -203,25 +211,60 @@ func TestFindSession(t *testing.T) {
 	t.Run("proxys the error from the sql db", func(t *testing.T) {
 		want := errors.New("an error")
 		mock.ExpectQuery(`
-				SELECT id, originalAgenda, duration, creation
-					FROM sessions
-					WHERE id`).WithArgs(sessionMock.ID).WillReturnError(want)
+		SELECT id, originalAgenda, duration, creation
+		FROM sessions
+		WHERE id`).WithArgs(sessionMock.ID).WillReturnError(want)
 
 		_, got := repo.FindSession(sessionMock.ID)
 
 		assertValue(t, got, want)
 	})
 
-	t.Run("not founding the key, return a ErrKeyNotFound", func(t *testing.T) {
+	t.Run("not founding the key, return a Session not found", func(t *testing.T) {
 		want := errors.New("Session not found")
 		mock.ExpectQuery(`
 				SELECT id, originalAgenda, duration, creation
-					FROM sessions
+				FROM sessions
 					WHERE id`).WithArgs(sessionMock.ID).WillReturnRows(sqlmock.NewRows([]string{}))
 
 		_, got := repo.FindSession(sessionMock.ID)
 
 		assertValue(t, got.Error(), want.Error())
+	})
+}
+
+func TestInsertVote(t *testing.T) {
+	db, mock, _ := sqlmock.New()
+	repo := SQLRepository{db: db}
+	defer db.Close()
+
+	t.Run("calls db.Exec with the right params", func(t *testing.T) {
+		mock.ExpectExec("INSERT INTO votes").WithArgs(
+			voteMock.AssociateID,
+			voteMock.SessionID,
+			voteMock.Document,
+			anyTime{},
+		)
+
+		repo.InsertVote(voteMock)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("SQL expectations failed: %s", err)
+		}
+	})
+
+	t.Run("proxys the error from the sql db", func(t *testing.T) {
+		want := errors.New("an error")
+		mock.ExpectExec("INSERT INTO votes").WithArgs(
+			voteMock.AssociateID,
+			voteMock.SessionID,
+			voteMock.Document,
+			anyTime{},
+		).WillReturnError(want)
+
+		got := repo.InsertVote(voteMock)
+
+		assertValue(t, got, want)
 	})
 }
 

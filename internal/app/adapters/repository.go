@@ -3,10 +3,12 @@ package adapters
 import (
 	"database/sql"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
 
 	// Loading the pq driver
 	_ "github.com/lib/pq"
@@ -92,5 +94,24 @@ func (r *SQLRepository) InsertSession(s session.Session) error {
 		s.Duration,
 		s.Creation,
 	)
+	return err
+}
+
+var insertVoteStatement = `
+	INSERT INTO votes (associateID, sessionID, document, creation)
+		VALUES ($1, $2, $3, $4)`
+
+// InsertVote Inserts a vote into the repository
+func (r *SQLRepository) InsertVote(v vote.Vote) error {
+	_, err := r.db.Exec(
+		insertVoteStatement,
+		v.AssociateID,
+		v.SessionID,
+		v.Document,
+		v.Creation,
+	)
+	if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+		return vote.ErrDuplicateVote
+	}
 	return err
 }
