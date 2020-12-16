@@ -30,11 +30,14 @@ type route struct {
 func NewHTTPServer(
 	l HTTPLogger,
 	aH ports.AgendaHandler,
+	sH ports.SessionHandler,
 ) HTTPServer {
 	logger := newLoggerMiddleware(l)
 	routes := []*route{
-		createRoute("/agenda/{0,}$", logger(handleCreateAgenda(aH))),
-		createRoute("/agenda/[^/]{0,}/{0,}$", logger(handleFindAgenda(aH))),
+		createRoute("/agenda$", logger(handleCreateAgenda(aH))),
+		createRoute("/agenda/[^/]{0,}$", logger(handleFindAgenda(aH))),
+		createRoute("/agenda/[^/]{0,}/session$", logger(handleCreateSession(sH))),
+		createRoute("/agenda/[^/]{0,}/session/[^/]{0,}$", logger(handleFindSession(sH))),
 	}
 	return &httpServer{
 		routes: routes,
@@ -61,7 +64,27 @@ func handleCreateAgenda(h ports.AgendaHandler) http.Handler {
 	})
 }
 
-func handleFindAgenda(h ports.AgendaHandler) http.Handler {
+func handleCreateSession(h ports.AgendaHandler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			h.Post(w, r)
+			return
+		}
+		methodNotAllowed(w, r)
+	})
+}
+
+func handleFindAgenda(h ports.SessionHandler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			h.Get(w, r)
+			return
+		}
+		methodNotAllowed(w, r)
+	})
+}
+
+func handleFindSession(h ports.SessionHandler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			h.Get(w, r)
