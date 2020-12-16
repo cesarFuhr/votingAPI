@@ -21,7 +21,8 @@ func NewSQLRepository(db *sql.DB) SQLRepository {
 
 // SQLRepository sql database persistency
 type SQLRepository struct {
-	db *sql.DB
+	db    *sql.DB
+	stmts []*sql.Stmt
 }
 
 var findAgendaStatement = `
@@ -118,4 +119,29 @@ func (r *SQLRepository) InsertVote(v vote.Vote) error {
 		return err
 	}
 	return nil
+}
+
+var findVotesStatement = `
+	SELECT vote
+		FROM votes
+		WHERE sessionID = $1`
+
+// FindVotes Finds all votes by sessionID
+func (r *SQLRepository) FindVotes(s session.Session) ([]string, error) {
+	rows, err := r.db.Query(findVotesStatement, s.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var voteValues []string
+	for rows.Next() {
+		var v string
+		err := rows.Scan(&v)
+		if err != nil {
+			return nil, err
+		}
+		voteValues = append(voteValues, v)
+	}
+	return voteValues, nil
 }

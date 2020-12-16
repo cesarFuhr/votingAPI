@@ -36,6 +36,7 @@ var voteMock = vote.Vote{
 	AssociateID: "string",
 	SessionID:   "string",
 	Document:    "12333",
+	Vote:        "S",
 	Creation:    time.Now(),
 }
 
@@ -243,6 +244,7 @@ func TestInsertVote(t *testing.T) {
 			voteMock.AssociateID,
 			voteMock.SessionID,
 			voteMock.Document,
+			voteMock.Vote,
 			anyTime{},
 		)
 
@@ -259,10 +261,61 @@ func TestInsertVote(t *testing.T) {
 			voteMock.AssociateID,
 			voteMock.SessionID,
 			voteMock.Document,
+			voteMock.Vote,
 			anyTime{},
 		).WillReturnError(want)
 
 		got := repo.InsertVote(voteMock)
+
+		assertValue(t, got, want)
+	})
+}
+
+func TestFindVotes(t *testing.T) {
+	db, mock, _ := sqlmock.New()
+	repo := SQLRepository{db: db}
+	defer db.Close()
+
+	t.Run("calls db.Exec with the right params", func(t *testing.T) {
+		mock.ExpectQuery("SELECT vote FROM votes WHERE sessionID").
+			WithArgs(sessionMock.ID)
+
+		repo.FindVotes(sessionMock)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("SQL expectations failed: %s", err)
+		}
+	})
+
+	t.Run("returns a list of vote values", func(t *testing.T) {
+		rows := sqlmock.
+			NewRows([]string{"vote"}).
+			AddRow("S").
+			AddRow("N").
+			AddRow("S").
+			AddRow("S")
+		mock.
+			ExpectQuery(`
+					SELECT vote
+					FROM votes
+					WHERE sessionID`).
+			WithArgs(sessionMock.ID).
+			WillReturnRows(rows)
+
+		returned, err := repo.FindVotes(sessionMock)
+
+		assertValue(t, err, nil)
+		if !reflect.DeepEqual([]string{"S", "N", "S", "S"}, returned) {
+			t.Errorf("want %v, got %v", sessionMock, returned)
+		}
+	})
+
+	t.Run("proxys the error from the sql db", func(t *testing.T) {
+		want := errors.New("an error")
+		mock.ExpectQuery("SELECT vote FROM votes WHERE sessionID").
+			WithArgs(sessionMock.ID).WillReturnError(want)
+
+		_, got := repo.FindVotes(sessionMock)
 
 		assertValue(t, got, want)
 	})
