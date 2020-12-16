@@ -10,6 +10,7 @@ import (
 	"github.com/cesarFuhr/gocrypto/internal/app/adapters"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
 	"github.com/cesarFuhr/gocrypto/internal/app/ports"
 	"github.com/cesarFuhr/gocrypto/internal/pkg/config"
 	"github.com/cesarFuhr/gocrypto/internal/pkg/db"
@@ -61,9 +62,12 @@ func bootstrapHTTPServer(cfg config.Config, sqlDB *sql.DB) server.HTTPServer {
 	sessionService := session.NewSessionService(&sqlRepo)
 	sessionHandler := ports.NewSessionHandler(sessionService)
 
+	voteService := vote.NewVoteService(&sqlRepo)
+	voteHandler := ports.NewVoteHandler(voteService)
+
 	logger := logger.NewLogger()
 
-	return server.NewHTTPServer(logger, agendaHandler, sessionHandler)
+	return server.NewHTTPServer(logger, agendaHandler, sessionHandler, voteHandler)
 }
 
 func getCfgSource() string {

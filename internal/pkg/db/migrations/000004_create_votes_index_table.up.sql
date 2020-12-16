@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX session_and_associate ON votes (associateID, sessionID)
