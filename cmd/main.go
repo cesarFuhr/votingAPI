@@ -9,6 +9,7 @@ import (
 	server "github.com/cesarFuhr/gocrypto/internal/app"
 	"github.com/cesarFuhr/gocrypto/internal/app/adapters"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
+	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
 	"github.com/cesarFuhr/gocrypto/internal/app/ports"
 	"github.com/cesarFuhr/gocrypto/internal/pkg/config"
 	"github.com/cesarFuhr/gocrypto/internal/pkg/db"
@@ -57,9 +58,12 @@ func bootstrapHTTPServer(cfg config.Config, sqlDB *sql.DB) server.HTTPServer {
 	agendaService := agenda.NewAgendaService(&sqlRepo)
 	agendaHandler := ports.NewAgendaHandler(agendaService)
 
+	sessionService := session.NewSessionService(&sqlRepo)
+	sessionHandler := ports.NewSessionHandler(sessionService)
+
 	logger := logger.NewLogger()
 
-	return server.NewHTTPServer(logger, agendaHandler)
+	return server.NewHTTPServer(logger, agendaHandler, sessionHandler)
 }
 
 func getCfgSource() string {
