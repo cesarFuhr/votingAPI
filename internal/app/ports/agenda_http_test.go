@@ -74,7 +74,7 @@ func TestPOSTAgenda(t *testing.T) {
 		}
 	})
 	t.Run("Should return all properties on /agenda response", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/keys", bytes.NewBuffer(validAgendaReqBody))
+		request, _ := http.NewRequest(http.MethodPost, "/agenda", bytes.NewBuffer(validAgendaReqBody))
 		response := httptest.NewRecorder()
 
 		wants := []string{"id", "description"}
