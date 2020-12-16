@@ -3,6 +3,7 @@ package ports
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 // HTTPError Exception formatter to all http badRequests
@@ -19,6 +20,18 @@ type HTTPCreateAgendaReq struct {
 type HTTPCreateAgendaRes struct {
 	ID          string `json:"id"`
 	Description string `json:"description"`
+}
+
+// HTTPCreateSessionReq json http representation of a create session request
+type HTTPCreateSessionReq struct {
+	Duration time.Duration `json:"durationInMinutes"`
+}
+
+// HTTPCreateSessionRes json http representation of a create session response
+type HTTPCreateSessionRes struct {
+	ID             string `json:"id"`
+	OriginalAgenda string `json:"originalAgenda"`
+	Expiration     string `json:"expiration"`
 }
 
 func internalServerError(w http.ResponseWriter) {
