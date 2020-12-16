@@ -17,8 +17,11 @@ func (mr *malformedRequest) Error() string {
 	return mr.msg
 }
 
-func decodeJSONBody(r *http.Request, dst interface{}) error {
+func decodeJSONBody(r *http.Request, dst interface{}, ignoreEmpty bool) error {
 	if r.Body == nil {
+		if ignoreEmpty {
+			return nil
+		}
 		return &malformedRequest{
 			status: http.StatusBadRequest,
 			msg:    "Invalid: Empty body",

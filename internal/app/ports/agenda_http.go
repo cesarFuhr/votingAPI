@@ -34,7 +34,7 @@ func NewAgendaHandler(s agenda.Service) AgendaHandler {
 // Post http translator
 func (h *agendaHandler) Post(w http.ResponseWriter, r *http.Request) {
 	var o agendaOpts
-	err := decodeJSONBody(r, &o)
+	err := decodeJSONBody(r, &o, false)
 	if err != nil {
 		var mr *malformedRequest
 		if errors.As(err, &mr) {

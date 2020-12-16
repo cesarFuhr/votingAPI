@@ -19,7 +19,7 @@ func TestDecodeJSONBody(t *testing.T) {
 		}
 
 		dst := testStruct{}
-		got := decodeJSONBody(r, dst)
+		got := decodeJSONBody(r, dst, false)
 
 		if got.Error() != want.Error() {
 			t.Errorf("want %v, got %v", want, got)
@@ -33,9 +33,20 @@ func TestDecodeJSONBody(t *testing.T) {
 		}
 
 		dst := testStruct{}
-		got := decodeJSONBody(r, dst)
+		got := decodeJSONBody(r, dst, false)
 
 		if got.Error() != want.Error() {
+			t.Errorf("want %v, got %v", want, got)
+		}
+	})
+	t.Run("Should not return an err for empty body in ignore is true", func(t *testing.T) {
+		r, _ := http.NewRequest(http.MethodPost, "whatever", nil)
+		var want error = nil
+
+		dst := testStruct{}
+		got := decodeJSONBody(r, dst, true)
+
+		if got != want {
 			t.Errorf("want %v, got %v", want, got)
 		}
 	})
@@ -44,7 +55,7 @@ func TestDecodeJSONBody(t *testing.T) {
 		wantedMsgPrefix := "Request body contains invalid JSON"
 
 		dst := testStruct{}
-		got := decodeJSONBody(r, dst)
+		got := decodeJSONBody(r, dst, false)
 
 		assertStringPrefix(t, got.Error(), wantedMsgPrefix)
 	})
