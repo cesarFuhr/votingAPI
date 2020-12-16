@@ -89,7 +89,7 @@ func TestPOSTAgenda(t *testing.T) {
 			}
 		}
 	})
-	t.Run("Should call the CreateAgenda with expiration and scope", func(t *testing.T) {
+	t.Run("Should call the CreateAgenda with the correct params", func(t *testing.T) {
 		description := "a description"
 		requestBody, _ := json.Marshal(map[string]string{
 			"description": description,

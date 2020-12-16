@@ -93,7 +93,7 @@ func TestPOSTSession(t *testing.T) {
 			}
 		}
 	})
-	t.Run("Should call the CreateSession with expiration and scope", func(t *testing.T) {
+	t.Run("Should call the CreateSession with the correct params", func(t *testing.T) {
 		duration := time.Minute
 		requestBody, _ := json.Marshal(map[string]interface{}{
 			"durationInMinutes": duration,
