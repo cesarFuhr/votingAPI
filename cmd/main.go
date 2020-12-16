@@ -49,6 +49,7 @@ func bootstrapSQLDatabase(cfg config.Config) *sql.DB {
 	if err != nil {
 		panic(err)
 	}
+	db.RunMigrations(sqlDB)
 	return sqlDB
 }
 
