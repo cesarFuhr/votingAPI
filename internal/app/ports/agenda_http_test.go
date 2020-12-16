@@ -46,15 +46,15 @@ func (s *AgendaServiceStub) FindAgenda(id string) (agenda.Agenda, error) {
 	return s.LastDeliveredAgenda, nil
 }
 
-var validReqBody, _ = json.Marshal(HTTPCreateAgendaReq{
+var validAgendaReqBody, _ = json.Marshal(HTTPCreateAgendaReq{
 	Description: "a description",
 })
 
-func TestPOSTKeys(t *testing.T) {
+func TestPOSTAgenda(t *testing.T) {
 	agendaService := AgendaServiceStub{}
 	h := NewAgendaHandler(&agendaService)
 	t.Run("Should return 201 on /agenda", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/agenda", bytes.NewBuffer(validReqBody))
+		request, _ := http.NewRequest(http.MethodPost, "/agenda", bytes.NewBuffer(validAgendaReqBody))
 		response := httptest.NewRecorder()
 
 		h.Post(response, request)
@@ -62,7 +62,7 @@ func TestPOSTKeys(t *testing.T) {
 		assertStatus(t, response.Code, http.StatusCreated)
 	})
 	t.Run("Should return valid json on /agenda", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/agenda", bytes.NewBuffer(validReqBody))
+		request, _ := http.NewRequest(http.MethodPost, "/agenda", bytes.NewBuffer(validAgendaReqBody))
 		response := httptest.NewRecorder()
 
 		h.Post(response, request)
@@ -74,7 +74,7 @@ func TestPOSTKeys(t *testing.T) {
 		}
 	})
 	t.Run("Should return all properties on /agenda response", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/keys", bytes.NewBuffer(validReqBody))
+		request, _ := http.NewRequest(http.MethodPost, "/keys", bytes.NewBuffer(validAgendaReqBody))
 		response := httptest.NewRecorder()
 
 		wants := []string{"id", "description"}
@@ -125,7 +125,7 @@ func TestPOSTKeys(t *testing.T) {
 	})
 }
 
-func TestGETKeys(t *testing.T) {
+func TestGETAgenda(t *testing.T) {
 	agendaService := AgendaServiceStub{}
 	h := NewAgendaHandler(&agendaService)
 	t.Run("Should return a 200 if it was a success", func(t *testing.T) {
