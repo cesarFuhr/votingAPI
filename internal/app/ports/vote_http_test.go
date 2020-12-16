@@ -17,8 +17,8 @@ type VoteServiceStub struct {
 	LastDeliveredVote vote.Vote
 }
 
-func (s *VoteServiceStub) CreateVote(associateID, sessionID, document string) (vote.Vote, error) {
-	s.CalledWith = []interface{}{associateID, sessionID, document}
+func (s *VoteServiceStub) CreateVote(associateID, sessionID, document, value string) (vote.Vote, error) {
+	s.CalledWith = []interface{}{associateID, sessionID, document, value}
 	if sessionID == "ERROR" {
 		return vote.Vote{}, errors.New("A ERROR")
 	}
@@ -32,6 +32,7 @@ func (s *VoteServiceStub) CreateVote(associateID, sessionID, document string) (v
 		AssociateID: associateID,
 		SessionID:   sessionID,
 		Document:    document,
+		Vote:        value,
 		Creation:    time.Now(),
 	}, nil
 }
@@ -39,6 +40,7 @@ func (s *VoteServiceStub) CreateVote(associateID, sessionID, document string) (v
 var validVoteReqBody, _ = json.Marshal(HTTPCreateVoteReq{
 	AssociateID: "associateID",
 	Document:    "01212393111",
+	Vote:        "S",
 })
 
 func TestPOSTVote(t *testing.T) {
@@ -61,6 +63,7 @@ func TestPOSTVote(t *testing.T) {
 		assertInsideSlice(t, voteService.CalledWith, "associateID")
 		assertInsideSlice(t, voteService.CalledWith, "01212393111")
 		assertInsideSlice(t, voteService.CalledWith, "sessionID")
+		assertInsideSlice(t, voteService.CalledWith, "S")
 	})
 	t.Run("Should return a internal server error if there was an error creating an vote", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session/ERROR/vote", bytes.NewBuffer(validVoteReqBody))

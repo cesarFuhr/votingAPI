@@ -98,8 +98,8 @@ func (r *SQLRepository) InsertSession(s session.Session) error {
 }
 
 var insertVoteStatement = `
-	INSERT INTO votes (associateID, sessionID, document, creation)
-		VALUES ($1, $2, $3, $4)`
+	INSERT INTO votes (associateID, sessionID, document, vote, creation)
+		VALUES ($1, $2, $3, $4, $5)`
 
 // InsertVote Inserts a vote into the repository
 func (r *SQLRepository) InsertVote(v vote.Vote) error {
@@ -108,10 +108,14 @@ func (r *SQLRepository) InsertVote(v vote.Vote) error {
 		v.AssociateID,
 		v.SessionID,
 		v.Document,
+		v.Vote,
 		v.Creation,
 	)
-	if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-		return vote.ErrDuplicateVote
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return vote.ErrDuplicateVote
+		}
+		return err
 	}
-	return err
+	return nil
 }

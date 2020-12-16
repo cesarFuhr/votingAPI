@@ -49,9 +49,9 @@ func (h *voteHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.service.CreateVote(o.AssociateID, sessionID, o.Document)
+	_, err = h.service.CreateVote(o.AssociateID, sessionID, o.Document, o.Vote)
 	if err != nil {
-		if err == vote.ErrDuplicateVote {
+		if err == vote.ErrDuplicateVote || err == vote.ErrBadVoteFormat {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: err.Error(),

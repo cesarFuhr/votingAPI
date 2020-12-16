@@ -38,6 +38,7 @@ type HTTPCreateSessionRes struct {
 type HTTPCreateVoteReq struct {
 	AssociateID string `json:"associateID"`
 	Document    string `json:"document"`
+	Vote        string `json:"vote"`
 }
 
 func internalServerError(w http.ResponseWriter) {

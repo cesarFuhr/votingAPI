@@ -46,7 +46,8 @@ func TestCreateVote(t *testing.T) {
 		associateID := "anID"
 		sessionID := "sessionID"
 		document := "01791229005"
-		got, _ := service.CreateVote(associateID, sessionID, document)
+		vote := "S"
+		got, _ := service.CreateVote(associateID, sessionID, document, vote)
 		want := Vote{}
 
 		assertType(t, got, want)
@@ -54,12 +55,14 @@ func TestCreateVote(t *testing.T) {
 		assertType(t, got.Creation, time.Now())
 		assertValue(t, got.SessionID, sessionID)
 		assertValue(t, got.Document, document)
+		assertValue(t, got.Vote, vote)
 	})
 	t.Run("Returns an Session not found error if it does not exists", func(t *testing.T) {
 		associateID := "anID"
 		sessionID := "notFound"
 		document := "01791229005"
-		_, got := service.CreateVote(associateID, sessionID, document)
+		vote := "S"
+		_, got := service.CreateVote(associateID, sessionID, document, vote)
 		want := errors.New("Session not found")
 
 		assertValue(t, got.Error(), want.Error())
@@ -68,7 +71,8 @@ func TestCreateVote(t *testing.T) {
 		associateID := "existing"
 		sessionID := "sessionID"
 		document := "01791229005"
-		_, got := service.CreateVote(associateID, sessionID, document)
+		vote := "S"
+		_, got := service.CreateVote(associateID, sessionID, document, vote)
 		want := ErrDuplicateVote
 
 		assertValue(t, got.Error(), want.Error())
@@ -77,7 +81,8 @@ func TestCreateVote(t *testing.T) {
 		associateID := "error"
 		sessionID := "sessionID"
 		document := "01791229005"
-		_, got := service.CreateVote(associateID, sessionID, document)
+		vote := "S"
+		_, got := service.CreateVote(associateID, sessionID, document, vote)
 		want := errors.New("ops, there was an error")
 
 		assertValue(t, got.Error(), want.Error())
