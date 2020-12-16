@@ -4,4 +4,5 @@ package session
 type Repository interface {
 	FindSession(string) (Session, error)
 	InsertSession(Session) error
+	FindVotes(Session) ([]string, error)
 }

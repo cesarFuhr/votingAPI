@@ -14,3 +14,16 @@ type Session struct {
 func (s *Session) GetExpiration() time.Time {
 	return s.Creation.Add(s.Duration)
 }
+
+type count struct {
+	InFavor int
+	Against int
+}
+
+// Result Representation of a voting session result
+type Result struct {
+	ID             string
+	OriginalAgenda string
+	Closed         bool
+	Count          count
+}

@@ -35,6 +35,13 @@ func (r *SessionRepoStub) InsertSession(s Session) error {
 	return nil
 }
 
+func (r *SessionRepoStub) FindVotes(s Session) ([]string, error) {
+	if s.OriginalAgenda == "error" {
+		return []string{}, errors.New("ops, there was an error")
+	}
+	return []string{"S", "N", "S", "N", "S"}, nil
+}
+
 func TestCreateSession(t *testing.T) {
 	now := time.Now()
 	store := map[string]Session{}
@@ -90,6 +97,68 @@ func TestFindSession(t *testing.T) {
 		assertType(t, got.Duration, time.Duration(time.Second))
 		assertType(t, got.Creation, now)
 		assertValue(t, got.OriginalAgenda, s.OriginalAgenda)
+	})
+	t.Run("Returns an error if there was an error", func(t *testing.T) {
+		_, err := service.FindSession("notFound")
+		want := errors.New("Session not found")
+
+		assertType(t, err, want)
+		assertValue(t, err.Error(), want.Error())
+	})
+}
+
+func TestResult(t *testing.T) {
+	now := time.Now()
+	store := map[string]Session{}
+	clockStub := ClockStub{RightNow: now}
+	repo := SessionRepoStub{store}
+	service := sessionService{&repo, &clockStub}
+	t.Run("Returns an result", func(t *testing.T) {
+		agendaID := "anID"
+		duration := time.Duration(time.Minute) & 5
+		s, _ := service.CreateSession(agendaID, duration)
+
+		got, _ := service.Result(s.ID)
+		want := Result{}
+
+		assertType(t, got, want)
+		assertValue(t, got.ID, s.ID)
+		assertValue(t, got.OriginalAgenda, s.OriginalAgenda)
+		assertType(t, got.Count, want.Count)
+		assertType(t, got.Closed, want.Closed)
+	})
+	t.Run("Returns an result closed result if is session is expired", func(t *testing.T) {
+		agendaID := "anID"
+		duration := time.Duration(time.Minute) & 5
+		s, _ := service.CreateSession(agendaID, duration)
+
+		clockStub.RightNow = now.Add(time.Duration(time.Hour))
+		got, _ := service.Result(s.ID)
+		want := true
+
+		assertValue(t, got.Closed, want)
+	})
+	t.Run("Returns an result not closed result if is session is not expired", func(t *testing.T) {
+		agendaID := "anID"
+		duration := time.Duration(time.Minute) & 5
+		s, _ := service.CreateSession(agendaID, duration)
+
+		clockStub.RightNow = now.Add(-time.Duration(time.Hour))
+		got, _ := service.Result(s.ID)
+		want := false
+
+		assertValue(t, got.Closed, want)
+	})
+	t.Run("Returns count of the votes", func(t *testing.T) {
+		agendaID := "anID"
+		duration := time.Duration(time.Minute) & 5
+		s, _ := service.CreateSession(agendaID, duration)
+
+		clockStub.RightNow = now.Add(-time.Duration(time.Hour))
+		got, _ := service.Result(s.ID)
+		want := count{3, 2}
+
+		assertValue(t, got.Count, want)
 	})
 	t.Run("Returns an error if there was an error", func(t *testing.T) {
 		_, err := service.FindSession("notFound")

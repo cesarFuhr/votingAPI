@@ -6,4 +6,5 @@ import "time"
 type Service interface {
 	CreateSession(string, time.Duration) (Session, error)
 	FindSession(string) (Session, error)
+	Result(string) (Result, error)
 }

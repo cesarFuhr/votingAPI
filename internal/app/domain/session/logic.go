@@ -29,7 +29,7 @@ type clock interface {
 	Now() time.Time
 }
 
-// CreateSession creates an agenda em stores it
+// CreateSession creates an session em stores it
 func (s *sessionService) CreateSession(agendaID string, duration time.Duration) (Session, error) {
 	id := uuid.New()
 
@@ -51,11 +51,40 @@ func (s *sessionService) CreateSession(agendaID string, duration time.Duration) 
 	return session, nil
 }
 
-// FindSession returns a agenda finding by ID
+// FindSession returns a session finding by ID
 func (s *sessionService) FindSession(id string) (Session, error) {
 	session, err := s.repo.FindSession(id)
 	if err != nil {
 		return Session{}, err
 	}
 	return session, nil
+}
+
+// Result returns a voting session result
+func (s *sessionService) Result(id string) (Result, error) {
+	session, err := s.repo.FindSession(id)
+	if err != nil {
+		return Result{}, err
+	}
+
+	votes, err := s.repo.FindVotes(session)
+	if err != nil {
+		return Result{}, err
+	}
+
+	c := count{}
+	for _, v := range votes {
+		if v == "S" {
+			c.InFavor++
+		} else {
+			c.Against++
+		}
+	}
+
+	return Result{
+		ID:             session.ID,
+		OriginalAgenda: session.OriginalAgenda,
+		Closed:         s.clock.Now().After(session.GetExpiration()),
+		Count:          c,
+	}, nil
 }
