@@ -34,6 +34,12 @@ type HTTPCreateSessionRes struct {
 	Expiration     string `json:"expiration"`
 }
 
+// HTTPCreateVoteReq json http representation of a create vote request
+type HTTPCreateVoteReq struct {
+	AssociateID string `json:"associateID"`
+	Document    string `json:"document"`
+}
+
 func internalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(HTTPError{
