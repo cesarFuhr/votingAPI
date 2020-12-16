@@ -31,6 +31,7 @@ func NewHTTPServer(
 	l HTTPLogger,
 	aH ports.AgendaHandler,
 	sH ports.SessionHandler,
+	vH ports.VoteHandler,
 ) HTTPServer {
 	logger := newLoggerMiddleware(l)
 	routes := []*route{
@@ -38,6 +39,7 @@ func NewHTTPServer(
 		createRoute("/agenda/[^/]{0,}$", logger(handleFindAgenda(aH))),
 		createRoute("/agenda/[^/]{0,}/session$", logger(handleCreateSession(sH))),
 		createRoute("/agenda/[^/]{0,}/session/[^/]{0,}$", logger(handleFindSession(sH))),
+		createRoute("/agenda/[^/]{0,}/session/[^/]{0,}/vote$", logger(handleCreateVote(vH))),
 	}
 	return &httpServer{
 		routes: routes,
@@ -88,6 +90,16 @@ func handleFindSession(h ports.SessionHandler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			h.Get(w, r)
+			return
+		}
+		methodNotAllowed(w, r)
+	})
+}
+
+func handleCreateVote(h ports.VoteHandler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			h.Post(w, r)
 			return
 		}
 		methodNotAllowed(w, r)
