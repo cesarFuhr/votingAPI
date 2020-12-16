@@ -58,7 +58,7 @@ func TestPOSTSession(t *testing.T) {
 	sessionService := SessionServiceStub{}
 	h := NewSessionHandler(&sessionService)
 	t.Run("Should return 201 on /session", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodPost, "/session", bytes.NewBuffer(validSessionReqBody))
+		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session", bytes.NewBuffer(validSessionReqBody))
 		response := httptest.NewRecorder()
 
 		h.Post(response, request)
@@ -98,7 +98,7 @@ func TestPOSTSession(t *testing.T) {
 		requestBody, _ := json.Marshal(map[string]interface{}{
 			"durationInMinutes": duration,
 		})
-		request, _ := http.NewRequest(http.MethodPost, "agenda/id/session", bytes.NewBuffer(requestBody))
+		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session", bytes.NewBuffer(requestBody))
 		response := httptest.NewRecorder()
 
 		h.Post(response, request)
@@ -120,7 +120,7 @@ func TestGETSession(t *testing.T) {
 	sessionService := SessionServiceStub{}
 	h := NewSessionHandler(&sessionService)
 	t.Run("Should return a 200 if it was a success", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodGet, "/session/anID", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/agenda/id/session/anID", nil)
 		response := httptest.NewRecorder()
 
 		want := http.StatusOK
@@ -130,7 +130,7 @@ func TestGETSession(t *testing.T) {
 		assertStatus(t, response.Code, want)
 	})
 	t.Run("Should return a Session if it was a success", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodGet, "/session/anID", nil)
+		request, _ := http.NewRequest(http.MethodGet, "/agenda/id/session/anID", nil)
 		response := httptest.NewRecorder()
 
 		wants := []string{"id", "originalAgenda", "expiration"}

@@ -28,7 +28,7 @@ func NewVoteHandler(s vote.Service) VoteHandler {
 
 // Post http translator
 func (h *voteHandler) Post(w http.ResponseWriter, r *http.Request) {
-	trimmed := strings.Split(r.URL.Path, "/session/")
+	trimmed := strings.SplitAfter(r.URL.Path, "/session/")
 	sessionID := strings.TrimSuffix(trimmed[1], "/vote")
 
 	var o HTTPCreateVoteReq

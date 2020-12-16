@@ -34,8 +34,8 @@ func NewSessionHandler(s session.Service) SessionHandler {
 
 // Post http translator
 func (h *sessionHandler) Post(w http.ResponseWriter, r *http.Request) {
-	trimmed := strings.TrimPrefix(r.URL.Path, "/agenda/")
-	originalAgenda := strings.TrimSuffix(trimmed, "/session")
+	trimmed := strings.SplitAfter(r.URL.Path, "/agenda/")
+	originalAgenda := strings.TrimSuffix(trimmed[1], "/session")
 
 	var o sessionOpts
 	err := decodeJSONBody(r, &o, true)
