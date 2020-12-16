@@ -71,7 +71,8 @@ func (h *sessionHandler) Post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *sessionHandler) Get(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/session/")
+	sliced := strings.Split(r.URL.Path, "/session/")
+	id := sliced[1]
 
 	session, err := h.service.FindSession(id)
 	if err != nil {

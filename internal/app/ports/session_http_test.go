@@ -146,7 +146,7 @@ func TestGETSession(t *testing.T) {
 		}
 	})
 	t.Run("Should call find Session with the right params", func(t *testing.T) {
-		getRequest, _ := http.NewRequest(http.MethodGet, "/session/anID", nil)
+		getRequest, _ := http.NewRequest(http.MethodGet, "/agenda/anotherID/session/anID", nil)
 		response := httptest.NewRecorder()
 		h.Get(response, getRequest)
 
@@ -155,7 +155,7 @@ func TestGETSession(t *testing.T) {
 	t.Run("If session was not found", func(t *testing.T) {
 		t.Run("Should return a 404", func(t *testing.T) {
 			want := http.StatusNotFound
-			getRequest, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/session/notFound"), nil)
+			getRequest, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/agenda/id/session/notFound"), nil)
 			response := httptest.NewRecorder()
 			h.Get(response, getRequest)
 
@@ -166,7 +166,7 @@ func TestGETSession(t *testing.T) {
 	t.Run("If there was any other error", func(t *testing.T) {
 		t.Run("Should return a 500", func(t *testing.T) {
 			want := http.StatusInternalServerError
-			getRequest, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/session/otherError"), nil)
+			getRequest, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/agenda/id/session/otherError"), nil)
 			response := httptest.NewRecorder()
 			h.Get(response, getRequest)
 
