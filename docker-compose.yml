@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  app:
+    ports:
+      - "5000:5000"
+    environment: 
+      - "SERVER_PORT=5000"
+      - "DB_HOST=db"
+      - "DB_PORT=5432"
+      - "DB_USER=postgres"
+      - "DB_PASSWORD=pass"
+      - "DB_NAME=voting"
+      - "DB_DRIVER=postgres"
+    build:
+      context: .
+      dockerfile: ./builds/Dockerfile
+    depends_on: 
+      - db
+  db:
+    image: "postgres:alpine"
+    restart: always
+    ports:
+      - "5432:5432"
+    environment: 
+      - "POSTGRES_PASSWORD=pass"
+      - "POSTGRES_DB=voting"
