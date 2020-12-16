@@ -53,9 +53,9 @@ func (s *sessionService) CreateSession(agendaID string, duration time.Duration) 
 
 // FindSession returns a agenda finding by ID
 func (s *sessionService) FindSession(id string) (Session, error) {
-	agenda, err := s.repo.FindSession(id)
+	session, err := s.repo.FindSession(id)
 	if err != nil {
 		return Session{}, err
 	}
-	return agenda, nil
+	return session, nil
 }

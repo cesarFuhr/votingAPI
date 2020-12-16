@@ -2,7 +2,7 @@ package session
 
 import "time"
 
-// Session Representation of a meeting agenda
+// Session Representation of a agenda voting session
 type Session struct {
 	ID             string
 	OriginalAgenda string
