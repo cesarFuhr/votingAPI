@@ -43,7 +43,7 @@ func TestCreateSession(t *testing.T) {
 	service := sessionService{&repo, &clockStub}
 	t.Run("Returns an session", func(t *testing.T) {
 		agendaID := "anID"
-		duration := time.Duration(time.Minute) & 5
+		duration := time.Duration(time.Minute) * 5
 		got, _ := service.CreateSession(agendaID, duration)
 		want := Session{}
 
@@ -53,6 +53,14 @@ func TestCreateSession(t *testing.T) {
 		assertValue(t, got.OriginalAgenda, agendaID)
 		assertValue(t, got.Duration, duration)
 		assertValue(t, got.Creation, now)
+	})
+	t.Run("If informed duration is zero should assume 1 minute", func(t *testing.T) {
+		agendaID := "anID"
+		duration := time.Duration(time.Minute) * 0
+		got, _ := service.CreateSession(agendaID, duration)
+		want := time.Minute
+
+		assertValue(t, got.Duration, want)
 	})
 	t.Run("Returns the error if there was any error", func(t *testing.T) {
 		_, got := service.CreateSession("error", time.Duration(time.Minute))

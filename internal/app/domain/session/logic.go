@@ -33,6 +33,10 @@ type clock interface {
 func (s *sessionService) CreateSession(agendaID string, duration time.Duration) (Session, error) {
 	id := uuid.New()
 
+	if duration == 0 {
+		duration = time.Minute
+	}
+
 	session := Session{
 		ID:             id.String(),
 		OriginalAgenda: agendaID,
