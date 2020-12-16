@@ -77,6 +77,16 @@ func TestCreateVote(t *testing.T) {
 
 		assertValue(t, got.Error(), want.Error())
 	})
+	t.Run("Returns an Bad Format error if its not valid vote", func(t *testing.T) {
+		associateID := "existing"
+		sessionID := "sessionID"
+		document := "01791229005"
+		vote := "S"
+		_, got := service.CreateVote(associateID, sessionID, document, vote)
+		want := ErrDuplicateVote
+
+		assertValue(t, got.Error(), want.Error())
+	})
 	t.Run("Returns the error if there was any error", func(t *testing.T) {
 		associateID := "error"
 		sessionID := "sessionID"
