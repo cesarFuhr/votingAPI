@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
+	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
 
 	// Loading the pq driver
 	_ "github.com/lib/pq"
@@ -53,6 +54,43 @@ func (r *SQLRepository) InsertAgenda(a agenda.Agenda) error {
 		a.ID,
 		a.Description,
 		time.Now(),
+	)
+	return err
+}
+
+var findSessionStatement = `
+	SELECT id, originalAgenda, duration, creation
+		FROM sessions
+		WHERE id = $1`
+
+// FindSession finds and returns the requested key
+func (r *SQLRepository) FindSession(id string) (session.Session, error) {
+	row := r.db.QueryRow(findSessionStatement, id)
+
+	var s session.Session
+
+	switch err := row.Scan(&s.ID, &s.OriginalAgenda, &s.Duration, &s.Creation); err {
+	case nil:
+		return s, nil
+	case sql.ErrNoRows:
+		return session.Session{}, errors.New("Session not found")
+	default:
+		return session.Session{}, err
+	}
+}
+
+var insertSessionStatement = `
+	INSERT INTO sessions (id, originalAgenda, duration, creation)
+		VALUES ($1, $2, $3, $4)`
+
+// InsertSession Inserts an session into the repository
+func (r *SQLRepository) InsertSession(s session.Session) error {
+	_, err := r.db.Exec(
+		insertSessionStatement,
+		s.ID,
+		s.OriginalAgenda,
+		s.Duration,
+		s.Creation,
 	)
 	return err
 }
