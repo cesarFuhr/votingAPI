@@ -9,20 +9,21 @@ import (
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
+	"github.com/cesarFuhr/gocrypto/internal/pkg/logger"
 
 	// Loading the pq driver
 	_ "github.com/lib/pq"
 )
 
 // NewSQLRepository returns a new sql repository instance
-func NewSQLRepository(db *sql.DB) SQLRepository {
-	return SQLRepository{db: db}
+func NewSQLRepository(db *sql.DB, l logger.Logger) SQLRepository {
+	return SQLRepository{db: db, l: l}
 }
 
 // SQLRepository sql database persistency
 type SQLRepository struct {
-	db    *sql.DB
-	stmts []*sql.Stmt
+	db *sql.DB
+	l  logger.Logger
 }
 
 var findAgendaStatement = `
@@ -40,15 +41,17 @@ func (r *SQLRepository) FindAgenda(id string) (agenda.Agenda, error) {
 	case nil:
 		return a, nil
 	case sql.ErrNoRows:
+		r.l.Info(err.Error(), id)
 		return agenda.Agenda{}, errors.New("Agenda not found")
 	default:
+		r.l.Info(err.Error(), id)
 		return agenda.Agenda{}, err
 	}
 }
 
 var insertAgendaStatement = `
-	INSERT INTO agendas (id, description, creation)
-		VALUES ($1, $2, $3)`
+INSERT INTO agendas (id, description, creation)
+VALUES ($1, $2, $3)`
 
 // InsertAgenda Inserts an agenda into the repository
 func (r *SQLRepository) InsertAgenda(a agenda.Agenda) error {
@@ -62,9 +65,9 @@ func (r *SQLRepository) InsertAgenda(a agenda.Agenda) error {
 }
 
 var findSessionStatement = `
-	SELECT id, originalAgenda, duration, creation
-		FROM sessions
-		WHERE id = $1`
+SELECT id, originalAgenda, duration, creation
+FROM sessions
+WHERE id = $1`
 
 // FindSession finds and returns the requested key
 func (r *SQLRepository) FindSession(id string) (session.Session, error) {
@@ -76,8 +79,10 @@ func (r *SQLRepository) FindSession(id string) (session.Session, error) {
 	case nil:
 		return s, nil
 	case sql.ErrNoRows:
+		r.l.Info(err.Error(), id)
 		return session.Session{}, errors.New("Session not found")
 	default:
+		r.l.Info(err.Error(), id)
 		return session.Session{}, err
 	}
 }
@@ -114,6 +119,7 @@ func (r *SQLRepository) InsertVote(v vote.Vote) error {
 	)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			r.l.Info(err.Error(), v.AssociateID)
 			return vote.ErrDuplicateVote
 		}
 		return err
@@ -139,6 +145,7 @@ func (r *SQLRepository) FindVotes(s session.Session) ([]string, error) {
 		var v string
 		err := rows.Scan(&v)
 		if err != nil {
+			r.l.Info(err.Error(), s.ID)
 			return nil, err
 		}
 		voteValues = append(voteValues, v)

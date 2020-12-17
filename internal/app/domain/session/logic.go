@@ -7,15 +7,17 @@ import (
 )
 
 // NewSessionService creates and returns an agenda service
-func NewSessionService(r Repository) Service {
+func NewSessionService(r Repository, p Publisher) Service {
 	return &sessionService{
 		repo:  r,
+		pub:   p,
 		clock: &internalClock{},
 	}
 }
 
 type sessionService struct {
 	repo  Repository
+	pub   Publisher
 	clock clock
 }
 
@@ -48,7 +50,22 @@ func (s *sessionService) CreateSession(agendaID string, duration time.Duration) 
 	if err != nil {
 		return Session{}, err
 	}
+
+	t := time.NewTicker(session.Duration + (10 * time.Second))
+	go notifyResult(t, session, s)
+
 	return session, nil
+}
+
+func notifyResult(t *time.Ticker, session Session, s *sessionService) {
+	<-t.C
+	defer t.Stop()
+
+	result, err := s.Result(session.ID)
+	if err != nil {
+		return
+	}
+	err = s.pub.PublishResult(result)
 }
 
 // FindSession returns a session finding by ID

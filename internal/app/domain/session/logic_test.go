@@ -3,6 +3,7 @@ package session
 import (
 	"errors"
 	"reflect"
+	"sync"
 	"testing"
 	"time"
 )
@@ -42,12 +43,22 @@ func (r *SessionRepoStub) FindVotes(s Session) ([]string, error) {
 	return []string{"S", "N", "S", "N", "S"}, nil
 }
 
+type PublisherStub struct {
+	CalledWith []interface{}
+	wg         sync.WaitGroup
+}
+
+func (p *PublisherStub) PublishResult(r Result) error {
+	return nil
+}
+
 func TestCreateSession(t *testing.T) {
 	now := time.Now()
 	store := map[string]Session{}
 	clockStub := ClockStub{RightNow: now}
+	pubStub := PublisherStub{CalledWith: []interface{}{}}
 	repo := SessionRepoStub{store}
-	service := sessionService{&repo, &clockStub}
+	service := sessionService{&repo, &pubStub, &clockStub}
 	t.Run("Returns an session", func(t *testing.T) {
 		agendaID := "anID"
 		duration := time.Duration(time.Minute) * 5
@@ -81,8 +92,9 @@ func TestFindSession(t *testing.T) {
 	now := time.Now()
 	store := map[string]Session{}
 	clockStub := ClockStub{RightNow: now}
+	pubStub := PublisherStub{CalledWith: []interface{}{}}
 	repo := SessionRepoStub{store}
-	service := sessionService{&repo, &clockStub}
+	service := sessionService{&repo, &pubStub, &clockStub}
 	t.Run("Returns an session", func(t *testing.T) {
 		agendaID := "anID"
 		duration := time.Duration(time.Minute) & 5
@@ -111,8 +123,9 @@ func TestResult(t *testing.T) {
 	now := time.Now()
 	store := map[string]Session{}
 	clockStub := ClockStub{RightNow: now}
+	pubStub := PublisherStub{CalledWith: []interface{}{}}
 	repo := SessionRepoStub{store}
-	service := sessionService{&repo, &clockStub}
+	service := sessionService{&repo, &pubStub, &clockStub}
 	t.Run("Returns an result", func(t *testing.T) {
 		agendaID := "anID"
 		duration := time.Duration(time.Minute) & 5

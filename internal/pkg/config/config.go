@@ -58,6 +58,9 @@ type Config struct {
 		Dbname   string `yaml:"dbname" envconfig:"DB_NAME"`
 		Driver   string `yaml:"driver" envconfig:"DB_DRIVER"`
 	} `yaml:"database"`
+	Broker struct {
+		ConnString string `yaml:"connString" envconfig:"BROKER_CONN_STRING"`
+	} `yaml:"broker"`
 	App struct {
 	} `yaml:"app"`
 }

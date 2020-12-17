@@ -40,9 +40,13 @@ var voteMock = vote.Vote{
 	Creation:    time.Now(),
 }
 
+type loggerStub struct{}
+
+func (l *loggerStub) Info(...interface{}) {}
+
 func TestInsertAgenda(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	repo := SQLRepository{db: db}
+	repo := SQLRepository{db: db, l: &loggerStub{}}
 	defer db.Close()
 
 	t.Run("calls db.Exec with the right params", func(t *testing.T) {
@@ -75,7 +79,7 @@ func TestInsertAgenda(t *testing.T) {
 
 func TestFindAgenda(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	repo := SQLRepository{db: db}
+	repo := SQLRepository{db: db, l: &loggerStub{}}
 	defer db.Close()
 
 	t.Run("calls db.QueryRow with the right params", func(t *testing.T) {
@@ -138,7 +142,7 @@ func TestFindAgenda(t *testing.T) {
 
 func TestInsertSession(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	repo := SQLRepository{db: db}
+	repo := SQLRepository{db: db, l: &loggerStub{}}
 	defer db.Close()
 
 	t.Run("calls db.Exec with the right params", func(t *testing.T) {
@@ -173,7 +177,7 @@ func TestInsertSession(t *testing.T) {
 
 func TestFindSession(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	repo := SQLRepository{db: db}
+	repo := SQLRepository{db: db, l: &loggerStub{}}
 	defer db.Close()
 
 	t.Run("calls db.QueryRow with the right params", func(t *testing.T) {
@@ -236,7 +240,7 @@ func TestFindSession(t *testing.T) {
 
 func TestInsertVote(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	repo := SQLRepository{db: db}
+	repo := SQLRepository{db: db, l: &loggerStub{}}
 	defer db.Close()
 
 	t.Run("calls db.Exec with the right params", func(t *testing.T) {
@@ -273,7 +277,7 @@ func TestInsertVote(t *testing.T) {
 
 func TestFindVotes(t *testing.T) {
 	db, mock, _ := sqlmock.New()
-	repo := SQLRepository{db: db}
+	repo := SQLRepository{db: db, l: &loggerStub{}}
 	defer db.Close()
 
 	t.Run("calls db.Exec with the right params", func(t *testing.T) {
