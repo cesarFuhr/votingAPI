@@ -9,7 +9,8 @@ import (
 // NewVoteService creates and returns an agenda service
 func NewVoteService(r Repository) Service {
 	return &voteService{
-		repo: r,
+		repo:  r,
+		clock: &internalClock{},
 	}
 }
 
