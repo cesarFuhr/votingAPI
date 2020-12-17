@@ -4,22 +4,17 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strings"
 )
 
-const validadeServiceURL = "https://user-info.herokuapp.com/users/"
+const validateServiceURL = "https://user-info.herokuapp.com/users/"
 const ableString = "ABLE_TO_VOTE"
-
-type jsonValidateRes struct {
-	status string
-}
 
 // DocValidator abstraction to encapsulate the document validation
 type DocValidator struct{}
 
 // ValidateDocument returns if document is able to vote
 func (v DocValidator) ValidateDocument(document string) (bool, error) {
-	res, err := http.Get(validadeServiceURL + document)
+	res, err := http.Get(validateServiceURL + document)
 	if err != nil {
 		return false, err
 	}
@@ -29,8 +24,8 @@ func (v DocValidator) ValidateDocument(document string) (bool, error) {
 		return false, err
 	}
 
-	var j jsonValidateRes
+	j := map[string]interface{}{}
 	json.Unmarshal(resBytes, &j)
 
-	return strings.Contains(j.status, ableString), nil
+	return j["status"] == ableString, nil
 }
