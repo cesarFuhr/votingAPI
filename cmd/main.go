@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"time"
 
 	server "github.com/cesarFuhr/gocrypto/internal/app"
 	"github.com/cesarFuhr/gocrypto/internal/app/adapters"
@@ -29,6 +30,7 @@ func run() {
 		panic(err)
 	}
 
+	time.Sleep(5 * time.Second)
 	db := bootstrapSQLDatabase(cfg)
 	httpServer := bootstrapHTTPServer(cfg, db)
 
