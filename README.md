@@ -8,6 +8,13 @@ Exposes an API to create discussions and register votes
 * Deixei os logs nas bordas para não gerar um log excessívo
 * Qualquer dúvida estou a disposição
 
+# Sobre versionamento da API
+Em geral o aconselhável é que se utilize um versionamento logo no início do path da URL.
+É sempre bom ser retro compatível e permitir que o cliente tenha uma migração tranquila ou até use concomitantemente as APIs de versões diferentes.
+Um exemplo seria: /v1/agenda/...
+Existem autores que não consederam correto o versionamento detro dos microserviços (Susan Fowler). Segundo ela se entende o micro serviço quase como uma biblioteca errôneamente.
+Cada mincro serviço tem seu ciclo de vida e se está obsoleto ou se atualiza o comportamento ou se reescreve do forma a ser mais aderente as novas regras de negócio.
+
 # Como rodar
 
 Para rodar a aplicação é necessário ter docker e docker-compose instalados.
