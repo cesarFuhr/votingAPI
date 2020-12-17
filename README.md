@@ -5,7 +5,8 @@ Exposes an API to create discussions and register votes
 # Observações
 * Não fiz um fluxo de brach e merge pois foi um desenvolvimento sequencial e sem cooperação.
 * O swagger com a documentação está na pasta /api
-* Deixei os logs nas bordas para não gerar um log excessivo
+* Deixei os logs nas bordas para não gerar um log excessívo
+* Qualquer dúvida estou a disposição
 
 # Como rodar
 
@@ -21,6 +22,12 @@ docker-compose build
 Na raiz do projeto
 ```bash
 docker-compose up
+```
+
+## Stop and Clear
+Na raiz do projeto
+```bash
+docker-compose down
 ```
 
 ## Acompanhar as meétricas no dashboard MQTT
@@ -48,4 +55,9 @@ docker-compose -f docker-compose.load.yml up -d app
 ### Subir a aplicação de teste
 ```bash
 docker-compose -f docker-compose.load.yml up test-runner
+```
+
+### Parar as aplicações e remover os containers
+```bash
+docker-compose -f docker-compose.load.yml down
 ```

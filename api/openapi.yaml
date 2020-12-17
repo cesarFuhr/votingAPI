@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  title: VotingAPI
+  version: '1.0'
+  contact:
+    name: Cesar Cara
+    url: 'https://github.com/cesarFuhr'
+    email: cesar.fuhr.cara@gmail.com
+  description: POC API
+servers:
+  - url: 'http://localhost:5000'
+paths:
+  /agenda:
+    post:
+      summary: Create Agendas
+      operationId: post-agenda
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                  description:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - description
+        '400':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      description: Create a agenda
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+        description: ''
+      tags:
+        - Voting
+  '/agenda/{agendaID}':
+    get:
+      summary: Find Agendas
+      tags:
+        - Voting
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                  description:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - description
+        '404':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      operationId: 'get-agenda-:id'
+      description: Finds a agenda
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: agendaID
+        in: path
+        required: true
+  '/agenda/{agendaID}/session':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: agendaID
+        in: path
+        required: true
+    post:
+      summary: Create a session
+      tags:
+        - Voting
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                  originalAgenda:
+                    type: string
+                    minLength: 1
+                  expiration:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - originalAgenda
+                  - expiration
+        '400':
+          $ref: '#/components/responses/error'
+        '404':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      operationId: get-agenda-agendaID-session
+      description: Creates a voting session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                durationInMinutes:
+                  type: number
+              required:
+                - durationInMinutes
+  '/agenda/{agendaID}/session/{sessionID}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: agendaID
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: sessionID
+        in: path
+        required: true
+    get:
+      summary: Find Session
+      tags:
+        - Voting
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                  originalAgenda:
+                    type: string
+                    minLength: 1
+                  expiration:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - originalAgenda
+                  - expiration
+        '400':
+          $ref: '#/components/responses/error'
+        '404':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      operationId: get-agenda-agendaID-session-sessionID
+      description: Find session endpoint
+  '/agenda/{agendaID}/session/{sessionID}/vote':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: agendaID
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: sessionID
+        in: path
+        required: true
+    post:
+      summary: Create a Vote
+      operationId: post-agenda-agendaID-session-sessionID-vote
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/error'
+        '404':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      tags:
+        - Voting
+      description: Creates a vote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                associateID:
+                  type: string
+                  minLength: 1
+                document:
+                  type: string
+                  minLength: 1
+                vote:
+                  type: string
+                  minLength: 1
+                  pattern: S|N
+              required:
+                - associateID
+                - document
+                - vote
+        description: ''
+  '/agenda/{agendaID}/session/{sessionID}/result':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: agendaID
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: sessionID
+        in: path
+        required: true
+    get:
+      summary: Gets a Voting Session Result
+      tags:
+        - Voting
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                  originalAgenda:
+                    type: string
+                    minLength: 1
+                  closed:
+                    type: boolean
+                    description: Session closed or open
+                  count:
+                    type: object
+                    required:
+                      - inFavor
+                      - against
+                    properties:
+                      inFavor:
+                        type: number
+                      against:
+                        type: number
+                required:
+                  - id
+                  - originalAgenda
+                  - closed
+                  - count
+        '400':
+          $ref: '#/components/responses/error'
+        '404':
+          $ref: '#/components/responses/error'
+        '500':
+          $ref: '#/components/responses/error'
+      operationId: get-agenda-agendaID-session-sessionID-result
+      description: Returns a voting session result
+components:
+  schemas: {}
+  responses:
+    error:
+      description: Generic error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+tags:
+  - name: Voting
