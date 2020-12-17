@@ -62,13 +62,14 @@ func bootstrapHTTPServer(cfg config.Config, sqlDB *sql.DB) server.HTTPServer {
 
 	sessionService := session.NewSessionService(&sqlRepo)
 	sessionHandler := ports.NewSessionHandler(sessionService)
+	resultHandler := ports.NewResultHandler(sessionService)
 
 	voteService := vote.NewVoteService(&sqlRepo)
 	voteHandler := ports.NewVoteHandler(voteService)
 
 	logger := logger.NewLogger()
 
-	return server.NewHTTPServer(logger, agendaHandler, sessionHandler, voteHandler)
+	return server.NewHTTPServer(logger, agendaHandler, sessionHandler, voteHandler, resultHandler)
 }
 
 func getCfgSource() string {
