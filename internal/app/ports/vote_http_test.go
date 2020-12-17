@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/vote"
 )
 
 type VoteServiceStub struct {

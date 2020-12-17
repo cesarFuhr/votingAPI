@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
 )
 
 func (s *SessionServiceStub) Result(id string) (session.Result, error) {

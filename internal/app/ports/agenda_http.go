@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/agenda"
 )
 
 type agendaOpts struct {

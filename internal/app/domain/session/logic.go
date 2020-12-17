@@ -51,13 +51,13 @@ func (s *sessionService) CreateSession(agendaID string, duration time.Duration) 
 		return Session{}, err
 	}
 
-	t := time.NewTicker(session.Duration + (10 * time.Second))
+	t := time.NewTimer(session.Duration + (10 * time.Second))
 	go notifyResult(t, session, s)
 
 	return session, nil
 }
 
-func notifyResult(t *time.Ticker, session Session, s *sessionService) {
+func notifyResult(t *time.Timer, session Session, s *sessionService) {
 	<-t.C
 	defer t.Stop()
 

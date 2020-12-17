@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/agenda"
 )
 
 type AgendaServiceStub struct {

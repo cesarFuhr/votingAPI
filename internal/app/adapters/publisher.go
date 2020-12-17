@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
-	"github.com/cesarFuhr/gocrypto/internal/pkg/logger"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/pkg/logger"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 )

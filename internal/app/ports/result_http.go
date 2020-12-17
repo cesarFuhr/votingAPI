@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
 )
 
 type resultHandler struct {

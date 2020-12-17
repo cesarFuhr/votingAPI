@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"time"
 
-	server "github.com/cesarFuhr/gocrypto/internal/app"
-	"github.com/cesarFuhr/gocrypto/internal/app/adapters"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
-	"github.com/cesarFuhr/gocrypto/internal/app/ports"
-	"github.com/cesarFuhr/gocrypto/internal/pkg/config"
-	"github.com/cesarFuhr/gocrypto/internal/pkg/db"
-	"github.com/cesarFuhr/gocrypto/internal/pkg/logger"
+	server "github.com/cesarFuhr/votingAPI/internal/app"
+	"github.com/cesarFuhr/votingAPI/internal/app/adapters"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/agenda"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/vote"
+	"github.com/cesarFuhr/votingAPI/internal/app/ports"
+	"github.com/cesarFuhr/votingAPI/internal/pkg/config"
+	"github.com/cesarFuhr/votingAPI/internal/pkg/db"
+	"github.com/cesarFuhr/votingAPI/internal/pkg/logger"
 )
 
 func main() {

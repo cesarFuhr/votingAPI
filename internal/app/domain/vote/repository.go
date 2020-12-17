@@ -1,6 +1,6 @@
 package vote
 
-import "github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+import "github.com/cesarFuhr/votingAPI/internal/app/domain/session"
 
 // Repository Persistency interface to serve the Session service
 type Repository interface {

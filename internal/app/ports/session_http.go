@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
 )
 
 type sessionOpts struct {

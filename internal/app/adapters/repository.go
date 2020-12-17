@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
-	"github.com/cesarFuhr/gocrypto/internal/pkg/logger"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/agenda"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/vote"
+	"github.com/cesarFuhr/votingAPI/internal/pkg/logger"
 
 	// Loading the pq driver
 	_ "github.com/lib/pq"

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/cesarFuhr/gocrypto/internal/app/ports"
+	"github.com/cesarFuhr/votingAPI/internal/app/ports"
 )
 
 // HTTPServer http server interface

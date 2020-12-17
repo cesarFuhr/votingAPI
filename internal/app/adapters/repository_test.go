@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/agenda"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
-	"github.com/cesarFuhr/gocrypto/internal/app/domain/vote"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/agenda"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/session"
+	"github.com/cesarFuhr/votingAPI/internal/app/domain/vote"
 )
 
 type anyTime struct{}
