@@ -32,3 +32,12 @@ services:
     ports:
       - "1883:1883"
       - "18083:18083"
+  test-runner:
+    image: "peterevans/vegeta"
+    depends_on: 
+      - app
+    command: >-      
+      sh -c "echo 'GET http://app:5000/agenda/{agendaID}/session/{sessionID}/result'
+      | vegeta attack -rate=2000 -duration=10s 
+      | tee results.bin 
+      | vegeta report"
