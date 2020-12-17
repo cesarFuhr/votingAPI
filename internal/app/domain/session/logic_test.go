@@ -156,7 +156,7 @@ func TestResult(t *testing.T) {
 
 		clockStub.RightNow = now.Add(-time.Duration(time.Hour))
 		got, _ := service.Result(s.ID)
-		want := count{3, 2}
+		want := Count{3, 2}
 
 		assertValue(t, got.Count, want)
 	})

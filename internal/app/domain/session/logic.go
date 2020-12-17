@@ -72,7 +72,7 @@ func (s *sessionService) Result(id string) (Result, error) {
 		return Result{}, err
 	}
 
-	c := count{}
+	c := Count{}
 	for _, v := range votes {
 		if v == "S" {
 			c.InFavor++

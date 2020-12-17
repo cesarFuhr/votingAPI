@@ -15,7 +15,8 @@ func (s *Session) GetExpiration() time.Time {
 	return s.Creation.Add(s.Duration)
 }
 
-type count struct {
+// Count Representation of a voting count
+type Count struct {
 	InFavor int
 	Against int
 }
@@ -25,5 +26,5 @@ type Result struct {
 	ID             string
 	OriginalAgenda string
 	Closed         bool
-	Count          count
+	Count          Count
 }
