@@ -3,10 +3,23 @@
 Exposes an API to create discussions and register votes
 
 # Observações
+* Muito obrigado pela oportunidade, espero corresponder as expectativas
 * Não fiz um fluxo de brach e merge pois foi um desenvolvimento sequencial e sem cooperação.
 * O swagger com a documentação está na pasta /api
 * Deixei os logs nas bordas para não gerar um log excessívo
 * Qualquer dúvida estou a disposição
+
+# Pontos propostos
+* OK - Cadastrar uma nova pauta -> /agenda
+* OK - Abrir uma sessão de votação -> /session
+* OK - Receber votos associados a pautas -> /vote
+* OK - Contabilizar os votos e dar o resultado da votação -> /result
+
+# Pontos bonus
+* OK - Integração com sistemas internos -> ver internal/app/adapters e interal/app/domain/vote
+* OK - Mensageria e filas -> ver internal/app/adapters e internal/app/domain/session
+* OK - Performance -> ver abaixo a descrição de como testar
+* OK - Versionamento da API -> deixei um comentário em seguida, podemos conversar mais sobre o assunto
 
 # Sobre versionamento da API
 Em geral o aconselhável é que se utilize um versionamento logo no início do path da URL.
@@ -15,7 +28,7 @@ Um exemplo seria: /v1/agenda/...
 
 É sempre bom ser retro compatível e permitir que o cliente tenha uma migração tranquila ou até use concomitantemente as APIs de versões diferentes.
 
-Existem autores que não coniederam correto o versionamento dentro dos microserviços (Susan Fowler). Segundo ela se entende o micro serviço quase como uma biblioteca errôneamente.
+Existem autores que não consideram correto o versionamento dentro dos microserviços (Susan Fowler). Segundo ela se entende o micro serviço quase como uma biblioteca errôneamente.
 Cada mincro serviço tem seu ciclo de vida e se está obsoleto ou se atualiza o comportamento ou se reescreve do forma a ser mais aderente as novas regras de negócio.
 
 # Como rodar
@@ -40,7 +53,7 @@ Na raiz do projeto
 docker-compose down
 ```
 
-## Acompanhar as meétricas no dashboard MQTT
+## Acompanhar as métricas no dashboard MQTT
 http://localhost:18083
 User: admin
 Pass: public
