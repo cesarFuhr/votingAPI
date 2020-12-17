@@ -41,6 +41,17 @@ type HTTPCreateVoteReq struct {
 	Vote        string `json:"vote"`
 }
 
+// HTTPResultSessionRes json http representation of a session result response
+type HTTPResultSessionRes struct {
+	ID             string `json:"id"`
+	OriginalAgenda string `json:"originalAgenda"`
+	Closed         bool   `json:"closed"`
+	Count          struct {
+		InFavor  int `json:"inFavor"`
+		Angainst int `json:"against"`
+	} `json:"count"`
+}
+
 func internalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(HTTPError{
