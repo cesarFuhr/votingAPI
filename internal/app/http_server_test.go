@@ -50,6 +50,16 @@ func (h *voteHandlerStub) Post(w http.ResponseWriter, r *http.Request) {
 	h.P.CalledWith = []interface{}{w, r}
 }
 
+type resultHandlerStub struct {
+	G struct {
+		CalledWith []interface{}
+	}
+}
+
+func (h *resultHandlerStub) Get(w http.ResponseWriter, r *http.Request) {
+	h.G.CalledWith = []interface{}{w, r}
+}
+
 type loggerStub struct {
 	CalledWith []interface{}
 }
@@ -63,10 +73,11 @@ var (
 	aH  = agendaHandlerStub{}
 	sH  = sessionHandlerStub{}
 	vH  = voteHandlerStub{}
+	rH  = resultHandlerStub{}
 )
 
 func TestAgendaEndpoint(t *testing.T) {
-	server := NewHTTPServer(&log, &aH, &sH, &vH)
+	server := NewHTTPServer(&log, &aH, &sH, &vH, &rH)
 	t.Run("calls agendaHandler.Post in a /agenda http POST", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/agenda", nil)
 		response := httptest.NewRecorder()
@@ -108,7 +119,7 @@ func TestAgendaEndpoint(t *testing.T) {
 }
 
 func TestSessionEndpoint(t *testing.T) {
-	server := NewHTTPServer(&log, &aH, &sH, &vH)
+	server := NewHTTPServer(&log, &aH, &sH, &vH, &rH)
 	t.Run("calls sessionHandler.Post in a /agenda/id/session http POST", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session", nil)
 		response := httptest.NewRecorder()
@@ -150,7 +161,7 @@ func TestSessionEndpoint(t *testing.T) {
 }
 
 func TestVoteEndpoint(t *testing.T) {
-	server := NewHTTPServer(&log, &aH, &sH, &vH)
+	server := NewHTTPServer(&log, &aH, &sH, &vH, &rH)
 	t.Run("calls voteHandler.Post in a /agenda/id/session/id/vote http POST", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session/id/vote", nil)
 		response := httptest.NewRecorder()
@@ -172,6 +183,39 @@ func TestVoteEndpoint(t *testing.T) {
 		log.CalledWith = []interface{}{}
 		endpoint := "/agenda/id/session/id/vote"
 		method := http.MethodPost
+		request, _ := http.NewRequest(method, endpoint, nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		assertInsideSlice(t, log.CalledWith, endpoint)
+		assertInsideSlice(t, log.CalledWith, method)
+	})
+}
+
+func TestResultEndpoint(t *testing.T) {
+	server := NewHTTPServer(&log, &aH, &sH, &vH, &rH)
+	t.Run("calls resultHandler.Get in a /agenda/id/session/id/result http GET", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodGet, "/agenda/id/session/id/result", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		assertInsideSlice(t, rH.G.CalledWith, response)
+		assertInsideSlice(t, rH.G.CalledWith, request)
+	})
+	t.Run("returns method not allowed for any other method", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPatch, "/agenda/anID/session/id/result", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		assertValue(t, response.Code, http.StatusMethodNotAllowed)
+	})
+	t.Run("calls logger.Info in /agenda/id/session/id http Requests", func(t *testing.T) {
+		log.CalledWith = []interface{}{}
+		endpoint := "/agenda/id/session/id/result"
+		method := http.MethodGet
 		request, _ := http.NewRequest(method, endpoint, nil)
 		response := httptest.NewRecorder()
 
