@@ -30,7 +30,7 @@ func run() {
 		panic(err)
 	}
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	db := bootstrapSQLDatabase(cfg)
 	httpServer := bootstrapHTTPServer(cfg, db)
 
@@ -56,22 +56,22 @@ func bootstrapSQLDatabase(cfg config.Config) *sql.DB {
 }
 
 func bootstrapHTTPServer(cfg config.Config, sqlDB *sql.DB) server.HTTPServer {
+	l := logger.NewLogger()
 
-	sqlRepo := adapters.NewSQLRepository(sqlDB)
+	sqlRepo := adapters.NewSQLRepository(sqlDB, l)
+	mqttPub := adapters.NewMQTTPublisher(cfg.Broker.ConnString, l)
 
 	agendaService := agenda.NewAgendaService(&sqlRepo)
 	agendaHandler := ports.NewAgendaHandler(agendaService)
 
-	sessionService := session.NewSessionService(&sqlRepo)
+	sessionService := session.NewSessionService(&sqlRepo, &mqttPub)
 	sessionHandler := ports.NewSessionHandler(sessionService)
 	resultHandler := ports.NewResultHandler(sessionService)
 
 	voteService := vote.NewVoteService(&sqlRepo, &adapters.DocValidator{})
 	voteHandler := ports.NewVoteHandler(voteService)
 
-	logger := logger.NewLogger()
-
-	return server.NewHTTPServer(logger, agendaHandler, sessionHandler, voteHandler, resultHandler)
+	return server.NewHTTPServer(l, agendaHandler, sessionHandler, voteHandler, resultHandler)
 }
 
 func getCfgSource() string {
