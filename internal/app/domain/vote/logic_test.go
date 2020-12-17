@@ -3,6 +3,7 @@ package vote
 import (
 	"errors"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -30,6 +31,12 @@ func (r *VoteRepoStub) FindSession(ID string) (session.Session, error) {
 	return s, nil
 }
 
+type DocValidatorStub struct{}
+
+func (v DocValidatorStub) ValidateDocument(doc string) (bool, error) {
+	return !strings.Contains(doc, "error"), nil
+}
+
 func (r *VoteRepoStub) InsertVote(v Vote) error {
 	if v.AssociateID == "error" {
 		return errors.New("ops, there was an error")
@@ -54,7 +61,7 @@ func TestCreateVote(t *testing.T) {
 	repo := VoteRepoStub{sStore, vStore}
 	now := time.Now()
 	clockStub := ClockStub{RightNow: now}
-	service := voteService{&repo, &clockStub}
+	service := voteService{&repo, DocValidatorStub{}, &clockStub}
 	t.Run("Returns an vote", func(t *testing.T) {
 		associateID := "anID"
 		sessionID := "sessionID"
@@ -112,8 +119,19 @@ func TestCreateVote(t *testing.T) {
 
 		assertValue(t, got.Error(), want.Error())
 	})
-	t.Run("Returns the error if there was any error", func(t *testing.T) {
+	t.Run("Returns an Not Able to Vote error if the document isn't valid", func(t *testing.T) {
 		clockStub.RightNow = time.Now()
+		associateID := "thisIsAnID"
+		sessionID := "sessionID"
+		document := "error"
+		vote := "S"
+
+		_, got := service.CreateVote(associateID, sessionID, document, vote)
+		want := ErrNotAbleToVote
+
+		assertValue(t, got.Error(), want.Error())
+	})
+	t.Run("Returns the error if there was any error", func(t *testing.T) {
 		associateID := "error"
 		sessionID := "sessionID"
 		document := "01791229005"

@@ -7,10 +7,11 @@ import (
 )
 
 // NewVoteService creates and returns an agenda service
-func NewVoteService(r Repository) Service {
+func NewVoteService(r Repository, v DocValidator) Service {
 	return &voteService{
-		repo:  r,
-		clock: &internalClock{},
+		repo:      r,
+		validator: v,
+		clock:     &internalClock{},
 	}
 }
 
@@ -25,23 +26,34 @@ type clock interface {
 }
 
 type voteService struct {
-	repo  Repository
-	clock clock
+	repo      Repository
+	validator DocValidator
+	clock     clock
 }
 
-// ErrDuplicateVote represents an error caused a voting duplication
-var ErrDuplicateVote = errors.New("Duplicate vote")
-
-// ErrBadVoteFormat represents an error caused a voting duplication
-var ErrBadVoteFormat = errors.New("Bad formating in vote. Must be 'S' or 'N'")
-
-// ErrSessionExpired represents an error caused by session expiration
-var ErrSessionExpired = errors.New("This voting session is expired")
+var (
+	// ErrDuplicateVote represents an error caused a voting duplication
+	ErrDuplicateVote = errors.New("Duplicate vote")
+	// ErrBadVoteFormat represents an error caused a voting duplication
+	ErrBadVoteFormat = errors.New("Bad formating in vote. Must be 'S' or 'N'")
+	// ErrSessionExpired represents an error caused by session expiration
+	ErrSessionExpired = errors.New("This voting session is expired")
+	// ErrNotAbleToVote represents an error caused by invalid document
+	ErrNotAbleToVote = errors.New("Associate not able to vote")
+)
 
 // CreateVote creates an vote and stores it
 func (s *voteService) CreateVote(id, session, document, vote string) (Vote, error) {
 	if len(vote) > 1 || !strings.Contains("SN", vote) {
 		return Vote{}, ErrBadVoteFormat
+	}
+
+	isValidDoc, err := s.validator.ValidateDocument(document)
+	if err != nil {
+		return Vote{}, ErrSessionExpired
+	}
+	if !isValidDoc {
+		return Vote{}, ErrNotAbleToVote
 	}
 
 	v := Vote{
