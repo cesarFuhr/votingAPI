@@ -31,6 +31,7 @@ func (h *resultHandler) Get(w http.ResponseWriter, r *http.Request) {
 	result, err := h.service.Result(id)
 	if err != nil {
 		if err.Error() == "Session not found" {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: err.Error(),
@@ -41,6 +42,7 @@ func (h *resultHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	responseBody := HTTPResultSessionRes{
 		ID:             result.ID,

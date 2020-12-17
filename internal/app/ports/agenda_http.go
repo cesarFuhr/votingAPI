@@ -38,12 +38,14 @@ func (h *agendaHandler) Post(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var mr *malformedRequest
 		if errors.As(err, &mr) {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(mr.status)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: mr.msg,
 			})
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(HTTPError{
 			Message: fmt.Sprint(err),
@@ -57,6 +59,7 @@ func (h *agendaHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(HTTPCreateAgendaRes{
 		ID:          agenda.ID,
@@ -71,6 +74,7 @@ func (h *agendaHandler) Get(w http.ResponseWriter, r *http.Request) {
 	agenda, err := h.service.FindAgenda(id)
 	if err != nil {
 		if err.Error() == "Agenda not found" {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: "Agenda not found",
@@ -81,6 +85,7 @@ func (h *agendaHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(HTTPCreateAgendaRes{
 		ID:          agenda.ID,

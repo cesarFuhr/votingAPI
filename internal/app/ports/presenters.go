@@ -53,6 +53,7 @@ type HTTPResultSessionRes struct {
 }
 
 func internalServerError(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(w).Encode(HTTPError{
 		Message: "There was an unexpected error",

@@ -36,12 +36,14 @@ func (h *voteHandler) Post(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var mr *malformedRequest
 		if errors.As(err, &mr) {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(mr.status)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: mr.msg,
 			})
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(HTTPError{
 			Message: fmt.Sprint(err),
@@ -55,6 +57,7 @@ func (h *voteHandler) Post(w http.ResponseWriter, r *http.Request) {
 			err == vote.ErrBadVoteFormat ||
 			err == vote.ErrSessionExpired ||
 			err == vote.ErrNotAbleToVote {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: err.Error(),
@@ -62,6 +65,7 @@ func (h *voteHandler) Post(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if err.Error() == "Session not found" {
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(HTTPError{
 				Message: err.Error(),
