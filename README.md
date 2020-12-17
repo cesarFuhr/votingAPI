@@ -2,6 +2,10 @@
 
 Exposes an API to create discussions and register votes
 
+# Observações
+* Não fiz um fluxo de brach e merge pois foi um desenvolvimento sequencial e sem cooperação.
+* O swagger com a documentação está na pasta /api
+* Deixei os logs nas bordas para não gerar um log excessivo
 
 # Como rodar
 
