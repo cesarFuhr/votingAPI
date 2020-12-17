@@ -13,8 +13,19 @@ func NewVoteService(r Repository) Service {
 	}
 }
 
+type internalClock struct{}
+
+func (c *internalClock) Now() time.Time {
+	return time.Now()
+}
+
+type clock interface {
+	Now() time.Time
+}
+
 type voteService struct {
-	repo Repository
+	repo  Repository
+	clock clock
 }
 
 // ErrDuplicateVote represents an error caused a voting duplication
@@ -22,6 +33,9 @@ var ErrDuplicateVote = errors.New("Duplicate vote")
 
 // ErrBadVoteFormat represents an error caused a voting duplication
 var ErrBadVoteFormat = errors.New("Bad formating in vote. Must be 'S' or 'N'")
+
+// ErrSessionExpired represents an error caused by session expiration
+var ErrSessionExpired = errors.New("This voting session is expired")
 
 // CreateVote creates an vote and stores it
 func (s *voteService) CreateVote(id, session, document, vote string) (Vote, error) {
@@ -37,9 +51,13 @@ func (s *voteService) CreateVote(id, session, document, vote string) (Vote, erro
 		Creation:    time.Now(),
 	}
 
-	_, err := s.repo.FindSession(v.SessionID)
+	sess, err := s.repo.FindSession(v.SessionID)
 	if err != nil {
 		return Vote{}, err
+	}
+
+	if s.clock.Now().After(sess.GetExpiration()) {
+		return Vote{}, ErrSessionExpired
 	}
 
 	err = s.repo.InsertVote(v)

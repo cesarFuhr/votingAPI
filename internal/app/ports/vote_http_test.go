@@ -28,6 +28,12 @@ func (s *VoteServiceStub) CreateVote(associateID, sessionID, document, value str
 	if sessionID == "duplicateVote" {
 		return vote.Vote{}, vote.ErrDuplicateVote
 	}
+	if sessionID == "expired" {
+		return vote.Vote{}, vote.ErrSessionExpired
+	}
+	if sessionID == "badFormat" {
+		return vote.Vote{}, vote.ErrBadVoteFormat
+	}
 	return vote.Vote{
 		AssociateID: associateID,
 		SessionID:   sessionID,
@@ -83,7 +89,7 @@ func TestPOSTVote(t *testing.T) {
 		assertStatus(t, response.Code, http.StatusBadRequest)
 		assertInsideJSON(t, response.Body, "message", "Session not found")
 	})
-	t.Run("Should return a internal server error if there was an error creating an vote", func(t *testing.T) {
+	t.Run("Should return a bad request if there was an error creating an vote", func(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session/duplicateVote/vote", bytes.NewBuffer(validVoteReqBody))
 		response := httptest.NewRecorder()
 
@@ -91,5 +97,23 @@ func TestPOSTVote(t *testing.T) {
 
 		assertStatus(t, response.Code, http.StatusBadRequest)
 		assertInsideJSON(t, response.Body, "message", vote.ErrDuplicateVote.Error())
+	})
+	t.Run("Should return a bad request if there was an error creating an vote", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session/expired/vote", bytes.NewBuffer(validVoteReqBody))
+		response := httptest.NewRecorder()
+
+		h.Post(response, request)
+
+		assertStatus(t, response.Code, http.StatusBadRequest)
+		assertInsideJSON(t, response.Body, "message", vote.ErrSessionExpired.Error())
+	})
+	t.Run("Should return a bad request if there was an error creating an vote", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session/badFormat/vote", bytes.NewBuffer(validVoteReqBody))
+		response := httptest.NewRecorder()
+
+		h.Post(response, request)
+
+		assertStatus(t, response.Code, http.StatusBadRequest)
+		assertInsideJSON(t, response.Body, "message", vote.ErrBadVoteFormat.Error())
 	})
 }

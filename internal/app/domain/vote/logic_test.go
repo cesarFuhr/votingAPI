@@ -9,6 +9,14 @@ import (
 	"github.com/cesarFuhr/gocrypto/internal/app/domain/session"
 )
 
+type ClockStub struct {
+	RightNow time.Time
+}
+
+func (c ClockStub) Now() time.Time {
+	return c.RightNow
+}
+
 type VoteRepoStub struct {
 	sessionStore map[string]session.Session
 	voteStore    map[string]Vote
@@ -35,13 +43,18 @@ func (r *VoteRepoStub) InsertVote(v Vote) error {
 
 func TestCreateVote(t *testing.T) {
 	sStore := map[string]session.Session{
-		"sessionID": {},
+		"sessionID": {
+			Creation: time.Now(),
+			Duration: time.Hour,
+		},
 	}
 	vStore := map[string]Vote{
 		"existing": {},
 	}
 	repo := VoteRepoStub{sStore, vStore}
-	service := voteService{&repo}
+	now := time.Now()
+	clockStub := ClockStub{RightNow: now}
+	service := voteService{&repo, &clockStub}
 	t.Run("Returns an vote", func(t *testing.T) {
 		associateID := "anID"
 		sessionID := "sessionID"
@@ -87,7 +100,20 @@ func TestCreateVote(t *testing.T) {
 
 		assertValue(t, got.Error(), want.Error())
 	})
+	t.Run("Returns an Session Expired error if the session is expired", func(t *testing.T) {
+		associateID := "thisIsAnID"
+		sessionID := "sessionID"
+		document := "01791229005"
+		vote := "S"
+
+		clockStub.RightNow = time.Now().Add(2 * time.Hour)
+		_, got := service.CreateVote(associateID, sessionID, document, vote)
+		want := ErrSessionExpired
+
+		assertValue(t, got.Error(), want.Error())
+	})
 	t.Run("Returns the error if there was any error", func(t *testing.T) {
+		clockStub.RightNow = time.Now()
 		associateID := "error"
 		sessionID := "sessionID"
 		document := "01791229005"
