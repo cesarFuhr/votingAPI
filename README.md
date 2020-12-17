@@ -26,6 +26,7 @@ Pass: public
 
 ## Testar performance
 Escolhi o endpoint de Result como o alvo do teste por ser o mais custoso sem contar o serviço de registro voto, que só é mais lento pois sai dos limites do serviço.
+Deixei o teste com 2000 request/segundo, mas podem ficar a vontade para mudar tentar encontrar o teto em que o serviço retorna um 500.
 
 ### Subir o serviço
 Na raiz do projeto
