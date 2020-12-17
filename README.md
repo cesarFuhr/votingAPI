@@ -25,7 +25,7 @@ User: admin
 Pass: public
 
 ## Testar performance
-Escolhi o ondepoint de Result como o alvo do teste por ser o mais custoso sem contar o serviço de registro voto, que só é mais lento pois sai dos limites do serviço.
+Escolhi o endpoint de Result como o alvo do teste por ser o mais custoso sem contar o serviço de registro voto, que só é mais lento pois sai dos limites do serviço.
 
 ### Subir o serviço
 Na raiz do projeto
