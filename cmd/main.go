@@ -64,7 +64,7 @@ func bootstrapHTTPServer(cfg config.Config, sqlDB *sql.DB) server.HTTPServer {
 	sessionHandler := ports.NewSessionHandler(sessionService)
 	resultHandler := ports.NewResultHandler(sessionService)
 
-	voteService := vote.NewVoteService(&sqlRepo)
+	voteService := vote.NewVoteService(&sqlRepo, &adapters.DocValidator{})
 	voteHandler := ports.NewVoteHandler(voteService)
 
 	logger := logger.NewLogger()

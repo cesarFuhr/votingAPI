@@ -34,6 +34,9 @@ func (s *VoteServiceStub) CreateVote(associateID, sessionID, document, value str
 	if sessionID == "badFormat" {
 		return vote.Vote{}, vote.ErrBadVoteFormat
 	}
+	if sessionID == "notAble" {
+		return vote.Vote{}, vote.ErrNotAbleToVote
+	}
 	return vote.Vote{
 		AssociateID: associateID,
 		SessionID:   sessionID,
@@ -115,5 +118,14 @@ func TestPOSTVote(t *testing.T) {
 
 		assertStatus(t, response.Code, http.StatusBadRequest)
 		assertInsideJSON(t, response.Body, "message", vote.ErrBadVoteFormat.Error())
+	})
+	t.Run("Should return a bad request if there was an error creating an vote", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/agenda/id/session/notAble/vote", bytes.NewBuffer(validVoteReqBody))
+		response := httptest.NewRecorder()
+
+		h.Post(response, request)
+
+		assertStatus(t, response.Code, http.StatusBadRequest)
+		assertInsideJSON(t, response.Body, "message", vote.ErrNotAbleToVote.Error())
 	})
 }
