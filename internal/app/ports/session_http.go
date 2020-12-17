@@ -12,7 +12,7 @@ import (
 )
 
 type sessionOpts struct {
-	Duration time.Duration `json:"durationInMinutes"`
+	Duration int `json:"durationInMinutes"`
 }
 
 type sessionHandler struct {
@@ -55,7 +55,7 @@ func (h *sessionHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := h.service.CreateSession(originalAgenda, o.Duration)
+	session, err := h.service.CreateSession(originalAgenda, time.Duration(o.Duration*int(time.Minute)))
 	if err != nil {
 		internalServerError(w)
 		return
