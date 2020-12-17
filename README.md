@@ -6,6 +6,7 @@ Exposes an API to create discussions and register votes
 * Muito obrigado pela oportunidade, espero corresponder as expectativas
 * Não fiz um fluxo de brach e merge pois foi um desenvolvimento sequencial e sem cooperação.
 * O swagger com a documentação está na pasta /api
+* Tem uma collection do postman também no /api
 * Deixei os logs nas bordas para não gerar um log excessívo
 * Qualquer dúvida estou a disposição
 
@@ -34,6 +35,7 @@ Cada mincro serviço tem seu ciclo de vida e se está obsoleto ou se atualiza o 
 # Como rodar
 
 Para rodar a aplicação é necessário ter docker e docker-compose instalados.
+Coloquei uma collection do Postman no /api para uso como exemplo.
 
 ## Build
 Na raiz do projeto

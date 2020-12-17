@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "ec0abf06-7e4d-4019-990a-0664aca0c9ca",
+		"name": "VotingAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Agenda",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "990ea13c-ef71-4201-a544-1fbc56b44107",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"agendaID\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"description\": \"this an agenda description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/agenda",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"agenda"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Agenda",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/agenda/{{agendaID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"agenda",
+						"{{agendaID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Session",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dcc2e1a0-0279-4932-9645-4c549948d505",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"sessionID\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"durationInMinutes\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/agenda/{{agendaID}}/session",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"agenda",
+						"{{agendaID}}",
+						"session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Session",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/agenda/{{agendaID}}/session/{{sessionID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"agenda",
+						"{{agendaID}}",
+						"session",
+						"{{sessionID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Vote",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"associateID\": \"{{$guid}}\",\n\t\"document\": \"01792929005\",\n\t\"vote\": \"N\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/agenda/{{agendaID}}/session/{{sessionID}}/vote",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"agenda",
+						"{{agendaID}}",
+						"session",
+						"{{sessionID}}",
+						"vote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Result",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/agenda/{{agendaID}}/session/{{sessionID}}/result",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"agenda",
+						"{{agendaID}}",
+						"session",
+						"{{sessionID}}",
+						"result"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
