@@ -4,7 +4,7 @@ Exposes an API to create discussions and register votes
 
 # Observações
 * Muito obrigado pela oportunidade, espero corresponder as expectativas
-* Não fiz um fluxo de brach e merge pois foi um desenvolvimento sequencial e sem cooperação.
+* Não fiz um fluxo de branch e merge pois foi um desenvolvimento sequencial e sem cooperação.
 * O swagger com a documentação está na pasta /api
 * Tem uma collection do postman também no /api
 * Deixei os logs nas bordas para não gerar um log excessívo
@@ -17,7 +17,7 @@ Exposes an API to create discussions and register votes
 * OK - Contabilizar os votos e dar o resultado da votação -> /result
 
 # Pontos bonus
-* OK - Integração com sistemas internos -> ver internal/app/adapters e interal/app/domain/vote
+* OK - Integração com sistemas internos -> ver internal/app/adapters e internal/app/domain/vote
 * OK - Mensageria e filas -> ver internal/app/adapters e internal/app/domain/session
 * OK - Performance -> ver abaixo a descrição de como testar
 * OK - Versionamento da API -> deixei um comentário em seguida, podemos conversar mais sobre o assunto
@@ -64,6 +64,11 @@ Pass: public
 Escolhi o endpoint de Result como o alvo do teste por ser o mais custoso sem contar o serviço de registro voto, que só é mais lento pois sai dos limites do serviço.
 Deixei o teste com 2000 request/segundo, mas podem ficar a vontade para mudar tentar encontrar o teto em que o serviço retorna um 500.
 
+### Buildar o serviço
+Na raiz do projeto
+```bash
+docker-compose -f docker-compose.load.yml build
+```
 ### Subir o serviço
 Na raiz do projeto
 ```bash
@@ -85,4 +90,16 @@ docker-compose -f docker-compose.load.yml up test-runner
 ### Parar as aplicações e remover os containers
 ```bash
 docker-compose -f docker-compose.load.yml down
+```
+
+### O resultado deve ser algo semelhante a este
+```bash
+test-runner_1  | Requests      [total, rate, throughput]         20000, 2000.11, 1762.35
+test-runner_1  | Duration      [total, attack, wait]             11.349s, 9.999s, 1.349s
+test-runner_1  | Latencies     [min, mean, 50, 90, 95, 99, max]  409.583µs, 91.236ms, 768.118µs, 271.479ms, 454.515ms, 1.33s, 3.555s
+test-runner_1  | Bytes In      [total, mean]                     3020000, 151.00
+test-runner_1  | Bytes Out     [total, mean]                     0, 0.00
+test-runner_1  | Success       [ratio]                           100.00%
+test-runner_1  | Status Codes  [code:count]                      200:20000
+test-runner_1  | Error Set:
 ```
